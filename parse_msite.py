@@ -10,6 +10,8 @@ import bs4
 from requests import get, exceptions, Response
 from firebird.driver import connect
 
+from msud_gui import *
+
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
 """
 start_params - словарь, содержащий стартовые параметры для выборки
@@ -37,7 +39,7 @@ def data_db_collect(host, db, type_sud_delo, set_year):
                  'join "Document" dc on df."Document" = dc."OID" '
                  'join "CaseMaterial" cm on dc."ParentCaseMaterial" = cm."OID" '
                  'join "DocNum" dn on cm."DocNum" = dn."Id" where df."IsPubl" = 1 and dn."Num" like \''
-                 + type_sud_delo + '%/' + set_year + '\'')
+                 + str(type_sud_delo) + '%/' + str(set_year) + '\'')
         document = cur.fetchall()
         base_lst = []
         for itm in document:
@@ -47,6 +49,7 @@ def data_db_collect(host, db, type_sud_delo, set_year):
 
 class ParserMS:
     def __init__(self, url, start_params):
+        self.Ui_MainWindow = None
         self.url = url
         self.start_params = start_params
 

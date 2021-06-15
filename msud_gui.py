@@ -110,9 +110,9 @@ class Ui_MainWindow(object):
         self.lblSiteTotal = QtWidgets.QLabel(self.groupBox_3)
         self.lblSiteTotal.setGeometry(QtCore.QRect(60, 20, 47, 13))
         self.lblSiteTotal.setObjectName("lblSiteTotal")
-        self.lblSiteTotal_2 = QtWidgets.QLabel(self.groupBox_3)
-        self.lblSiteTotal_2.setGeometry(QtCore.QRect(60, 40, 47, 13))
-        self.lblSiteTotal_2.setObjectName("lblSiteTotal_2")
+        self.lblDBTotal = QtWidgets.QLabel(self.groupBox_3)
+        self.lblDBTotal.setGeometry(QtCore.QRect(60, 40, 47, 13))
+        self.lblDBTotal.setObjectName("lblDBTotal")
         self.btnCompare = QtWidgets.QPushButton(self.centralwidget)
         self.btnCompare.setGeometry(QtCore.QRect(370, 300, 121, 111))
         font = QtGui.QFont()
@@ -177,7 +177,7 @@ class Ui_MainWindow(object):
         self.label_11.setText(_translate("MainWindow", "На сайте"))
         self.label_12.setText(_translate("MainWindow", "В БД"))
         self.lblSiteTotal.setText(_translate("MainWindow", "TextLabel"))
-        self.lblSiteTotal_2.setText(_translate("MainWindow", "TextLabel"))
+        self.lblDBTotal.setText(_translate("MainWindow", "TextLabel"))
         self.btnCompare.setText(_translate("MainWindow", "Сравнить!\n"
 "Compare!\n"
 "Vergleichen!\n"

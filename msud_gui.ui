@@ -369,7 +369,7 @@
       <string>TextLabel</string>
      </property>
     </widget>
-    <widget class="QLabel" name="lblSiteTotal_2">
+    <widget class="QLabel" name="lblDBTotal">
      <property name="geometry">
       <rect>
        <x>60</x>
