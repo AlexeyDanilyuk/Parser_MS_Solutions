@@ -10,15 +10,7 @@ import bs4
 from requests import get, exceptions, Response
 from firebird.driver import connect
 
-from msud_gui import *
-
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
-"""
-start_params - словарь, содержащий стартовые параметры для выборки
-определяем фильтр по дате решения - 'ADM_DOCUMENT__RESULT_DATE1D': '01.01.2020' (можно поставить своё значение)
-т.е. будут выбраны все решения по административным делам, у которых дата вынесения решения больше либо равна
-заявленной в фильтре
-"""
 
 
 class StatusCodeError(Exception):
@@ -27,12 +19,6 @@ class StatusCodeError(Exception):
 
 
 def data_db_collect(host, db, type_sud_delo, set_year):
-    """
-    Подключаем к базе, получаем выборку, закидываем в словарь
-    Сравниваем файл со списком
-    Результат отработки будет выведен на экран - либо список номеров дел, если что-то пропущено,
-    либо будет выведено сообщение о завершении работы
-    """
     with connect(':'.join([host, db]), user='sysdba', password='masterkey', charset='win1251') as con:
         cur = con.cursor()
         cur.open('select dn."Num" from "DocumentFile" as df '
@@ -95,11 +81,10 @@ class ParserMS:
 
             # отправляем первую партию данных на запись
             # обрабатываем все страницы
-            print('Обрабатываем записи с сайта...')
             for num_str in range(1, count_page):
                 # добавим новый элемент pageNum_Recordset1 в стартовый словарь
                 self.start_params['pageNum_Recordset1'] = num_str
-                data = self._get_soup(self._get_response(self.url, headers=headers, params=self.start_params))
+                start_data = self._get_soup(self._get_response(self.url, headers=headers, params=self.start_params))
                 for tag in start_data.find_all('tr'):
                     if tag.contents[1].text != 'Номер дела':
                         data_site_lst.append(tag.contents[1].text.strip())

@@ -131,15 +131,22 @@ class ClientWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             'delo_table': type_proc_data[0] + '_DOCUMENT',
             'delo_id': type_proc_data[1],
         }
+        self.statusbar.showMessage('Обработка записей с сайта...', 3000)
         start_url = f'{self.txtSiteSU.text()}/modules.php?name=sud_delo&op=rd'
         parser_data_site = ParserMS(url=start_url, start_params=start_params)
         data_site = parser_data_site.data_site_collect()
+        self.statusbar.showMessage('Обработка записей с БД...', 3000)
         db_data = parse_msite.data_db_collect(host=self.lnHost.text(),
                                               db=self.path_db_amirs,
                                               type_sud_delo=type_proc_data[2],
                                               set_year=self.dtBegin.date().year())
         self.lblSiteTotal.setText(str(len(data_site)))
         self.lblDBTotal.setText(str(len(db_data)))
+        self.statusbar.showMessage('Обработка завершена...', 3000)
+
+        if len(db_data) > len(data_site):
+            db_data, data_site = data_site, db_data
+        print([i for i in data_site if i not in db_data])
 
 
 if __name__ == '__main__':
