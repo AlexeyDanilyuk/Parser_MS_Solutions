@@ -1,14 +1,14 @@
 """
-Задача по выборке опубликованных решений по административным делам одного участка
-и сравнение с рабочей БД судебного участка, а именно из БД выбираются номера административных
+Задача по выборке опубликованных решений по уголовным, гражданским и административным делам одного участка
+и сравнение с рабочей БД судебного участка, а именно из БД выбираются номера уголовных, гражданских и административных
 дел, решения которых были выгружены для публикации.
 """
 
 import time
 
 import bs4
+import fdb
 from requests import get, exceptions, Response
-from firebird.driver import connect
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0'}
 
@@ -18,19 +18,22 @@ class StatusCodeError(Exception):
         self.text = text
 
 
-def data_db_collect(host, db, type_sud_delo, set_year):
-    with connect(':'.join([host, db]), user='sysdba', password='masterkey', charset='win1251') as con:
-        cur = con.cursor()
-        cur.open('select dn."Num" from "DocumentFile" as df '
-                 'join "Document" dc on df."Document" = dc."OID" '
-                 'join "CaseMaterial" cm on dc."ParentCaseMaterial" = cm."OID" '
-                 'join "DocNum" dn on cm."DocNum" = dn."Id" where df."IsPubl" = 1 and dn."Num" like \''
-                 + str(type_sud_delo) + '%/' + str(set_year) + '\'')
-        document = cur.fetchall()
-        base_lst = []
-        for itm in document:
-            base_lst.append(itm[0])
-    return base_lst
+def data_db_collect(host, db, type_sud_delo, set_year, begin, finish, user, password):
+    try:
+        con = fdb.connect(dsn=':'.join([host, db]), user=user, password=password, sql_dialect=3)
+        if con:
+            cur = con.cursor()
+            sql = f'select dn."Num" from "DocumentFile" as df join "Document" dc on df."Document" = dc."OID" ' \
+                  f'join "CaseMaterial" cm on dc."ParentCaseMaterial" = cm."OID" ' \
+                  f'join "DocNum" dn on cm."DocNum" = dn."Id" where df."IsPubl" = 1 and ' \
+                  f'dn."Num" like \'{str(type_sud_delo)}%/{str(set_year)}\' ' \
+                  f'and dc."CreateDate" between \'{begin}\' and \'{finish}\''
+            cur.execute(sql)
+            document = cur.fetchall()
+            base_lst = [itm[0] for itm in document]
+            return base_lst
+    except BaseException as e:
+        return print(f'{e}')
 
 
 class ParserMS:
